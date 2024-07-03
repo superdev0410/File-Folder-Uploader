@@ -1,11 +1,12 @@
 import { Flex } from "@radix-ui/themes";
 
-import { FileUpload } from "@/client/components";
+import { FileUpload, FolderUpload } from "@/client/components";
 
 const MainPage = () => {
   return (
     <Flex className="flex-col gap-5 p-4">
-      <FileUpload />      
+      <FileUpload />
+      <FolderUpload />
     </Flex>
   )
 }

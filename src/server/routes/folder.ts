@@ -28,8 +28,8 @@ folderRouter.get("/download/:folder", async (req: Request, res: Response) => {
   const { folder } = req.params;
   const zip = new JSZip();
 
-  addFolderToZip(zip, `./folder/${folder}`, "./folder");
-  const zipped = zip.generateNodeStream({ type: "nodebuffer" });
+  addFolderToZip(zip, `./folder/${folder}`, "./folder/");
+  const zipped = await zip.generateAsync({ type: "nodebuffer" });
   res.json(zipped);
 });
 
