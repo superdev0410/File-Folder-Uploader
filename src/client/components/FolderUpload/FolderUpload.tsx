@@ -82,7 +82,7 @@ const FolderUpload = () => {
           className="hidden"
           onChange={onChangeFiles}
         />
-        <Heading>Drag & drop some folders here, or click to select folders</Heading>
+        <Heading>Drag & drop a folder here, or click to select a folder</Heading>
         {
           files.length > 0 &&
           <Text>{getFolderName(files[0])}</Text>

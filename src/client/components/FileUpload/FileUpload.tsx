@@ -1,23 +1,18 @@
-import { ChangeEvent, useCallback, useRef, useState, MouseEvent, useMemo, DragEvent } from "react";
+import { useCallback, useState, MouseEvent, useMemo } from "react";
 import { Flex, Heading, Button, DataList, Text } from "@radix-ui/themes";
 import { toast } from "react-toastify";
+import { useDropzone } from "react-dropzone";
 
 import { uploadFiles } from "@/client/utils/api";
 
 const FileUpload = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [fileNames, setFilesNames] = useState<string[]>([]);
   const [isUploading, setUploading] = useState(false);
-
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const host = useMemo(() => {
     return `${window.location.protocol}//${window.location.host}/download-file/`
   }, [window.location.protocol, window.location.host]);
-
-  const onChangeFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setFiles(e.target.files);
-  }, []);
 
   const onClickUpload = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -45,35 +40,30 @@ const FileUpload = () => {
     await navigator.clipboard.writeText(host + name);
   }, [host]);
 
-  const onClickAdd = useCallback(async () => {
-    fileRef.current?.click();
+  const onDrop = useCallback((acceptedFiels: File[]) => {
+    setFiles(acceptedFiels);
   }, []);
 
-  const onDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files.length > 0) {
-      setFiles(e.dataTransfer.files);
-    }
-  }, []);
-
-  const onDragOver = useCallback((e: DragEvent<HTMLInputElement>) => {
-    e.preventDefault();
-  }, []);
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: onDrop
+  });
 
   return (
     <>
       <Flex
-        className="flex-col justify-center items-center gap-4 border-2 border-dashed w-1/3 h-40 p-4"
-        onClick={onClickAdd}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
+        {...getRootProps()}
+        direction="column"
+        align="center"
+        width="50%"
+        gap="4"
+        className="border-2 border-dashed border-black p-5"
       >
-        <Heading>Click or Drag & Drop files to upload.</Heading>
+        <Heading>Drag & drop some files here, or click to select files</Heading>
         {
-          files &&
+          files.length > 0 &&
           <Text>{files.length > 1 ? `${files?.length} files` : files[0].name}</Text>
         }
-        <input ref={fileRef} type="file" className="hidden" multiple onChange={onChangeFile} />
+        <input {...getInputProps()} />
         <Button onClick={onClickUpload} loading={isUploading}>Upload</Button>
       </Flex>
       <DataList.Root>
