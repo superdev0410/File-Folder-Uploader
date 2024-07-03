@@ -1,8 +1,10 @@
 import { Router, Request, Response } from "express";
+import fs from "fs";
 import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    fs.mkdirSync("./files");
     cb(null, "./files");
   },
 
