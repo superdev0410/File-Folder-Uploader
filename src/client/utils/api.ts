@@ -1,4 +1,5 @@
 import axios from "axios";
+import { FileWithPath } from "react-dropzone";
 
 import { saveFile } from "@/client/utils/helper";
 
@@ -19,11 +20,11 @@ export const downloadFile = async (name: string) => {
   saveFile(name, new Blob([res.data]));
 }
 
-export const uploadFolder = async (files: FileList) => {
+export const uploadFolder = async (files: FileWithPath[]) => {
   const data = new FormData();
   for (let i = 0; i < files.length; i++) {
     data.append("files", files[i]);
-    data.append("paths", files[i].webkitRelativePath);
+    data.append("paths", files[i].path ?? files[i].webkitRelativePath);
   }
   await axios.post("/api/folder/upload", data, {
     headers: {
@@ -34,7 +35,6 @@ export const uploadFolder = async (files: FileList) => {
 
 export const downloadFolder = async (folder: string) => {
   const res = await axios.get(`/api/folder/download/${folder}`);
-  console.log(res.data);
   const dataArray = new Uint8Array(res.data.data);
   saveFile(`${folder}.zip`, new Blob([dataArray]));
 }

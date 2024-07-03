@@ -1,8 +1,10 @@
 import { ChangeEvent, MouseEvent, useCallback, useRef, useState, useMemo } from "react"
 import { Flex, Button, Heading, Text, DataList } from "@radix-ui/themes"
 import { toast } from "react-toastify";
+import { FileWithPath, useDropzone } from "react-dropzone";
 
 import { uploadFolder } from "@/client/utils/api";
+import { getFolderName } from "@/client/utils/helper";
 
 declare module 'react' {
   interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -13,7 +15,7 @@ declare module 'react' {
 }
 
 const FolderUpload = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [files, setFiles] = useState<FileWithPath[]>([]);
   const [isUploading, setUploading] = useState(false);
   const [folder, setFolder] = useState("");
 
@@ -24,8 +26,7 @@ const FolderUpload = () => {
   }, [window.location.protocol, window.location.host]);
 
   const onChangeFiles = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
-    setFiles(e.target.files);
+    onDrop(Array.from(e.target.files ?? []));
   }, []);
 
   const onClickAdd = useCallback(() => {
@@ -39,7 +40,7 @@ const FolderUpload = () => {
       setUploading(true);
       if (files) {
         await uploadFolder(files);
-        setFolder(files[0].webkitRelativePath.split("/")[0]);
+        setFolder(getFolderName(files[0]));
       } else {
         toast.warning("Add folder before uploading");
       }
@@ -53,16 +54,39 @@ const FolderUpload = () => {
   const onClickCopy = useCallback(async () => {
     await navigator.clipboard.writeText(`${url}download-folder/${folder}`);
   }, [url, folder]);
+
+  const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+    setFiles(acceptedFiles);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: onDrop,
+    noClick: true
+  })
   
   return (
     <>
-      <Flex className="flex-col gap-4 w-1/3 h-40 p-4 justify-center items-center border-2 border-dashed" onClick={onClickAdd}>
-        <Heading>Click or Drag & Drop folder</Heading>
+      <Flex
+        {...getRootProps()}
+        direction="column"
+        gap="4"
+        align="center"
+        className="border-2 border-dashed border-black p-5 w-1/2"
+        onClick={onClickAdd}
+      >
+        <input {...getInputProps()} webkitdirectory="true" />
+        <input
+          ref={inputRef}
+          type="file"
+          webkitdirectory="true"
+          className="hidden"
+          onChange={onChangeFiles}
+        />
+        <Heading>Drag & drop some folders here, or click to select folders</Heading>
         {
-          files &&
-          <Text>{files[0].webkitRelativePath.split("/")[0]}</Text>
+          files.length > 0 &&
+          <Text>{getFolderName(files[0])}</Text>
         }
-        <input ref={inputRef} type="file" webkitdirectory="true" onChange={onChangeFiles} className="hidden"/>
         <Button onClick={onClickUpload} loading={isUploading}>Upload</Button>
       </Flex>
       {
