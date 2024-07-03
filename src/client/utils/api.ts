@@ -3,7 +3,7 @@ import { FileWithPath } from "react-dropzone";
 
 import { saveFile } from "@/client/utils/helper";
 
-export const uploadFiles = async (files: FileList) => {
+export const uploadFiles = async (files: File[]) => {
   const data = new FormData();
   for (let i = 0; i < files.length; i++) {
     data.append("files", files[i]);

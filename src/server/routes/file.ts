@@ -4,7 +4,7 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    fs.mkdirSync("./files");
+    fs.mkdirSync("./files", { recursive: true });
     cb(null, "./files");
   },
 
