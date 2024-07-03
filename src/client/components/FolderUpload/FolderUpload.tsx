@@ -24,6 +24,7 @@ const FolderUpload = () => {
   }, [window.location.protocol, window.location.host]);
 
   const onChangeFiles = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.files);
     setFiles(e.target.files);
   }, []);
 
@@ -58,8 +59,8 @@ const FolderUpload = () => {
       <Flex className="flex-col gap-4 w-1/3 h-40 p-4 justify-center items-center border-2 border-dashed" onClick={onClickAdd}>
         <Heading>Click or Drag & Drop folder</Heading>
         {
-          folder.length > 0 &&
-          <Text>{folder}</Text>
+          files &&
+          <Text>{files[0].webkitRelativePath.split("/")[0]}</Text>
         }
         <input ref={inputRef} type="file" webkitdirectory="true" onChange={onChangeFiles} className="hidden"/>
         <Button onClick={onClickUpload} loading={isUploading}>Upload</Button>
