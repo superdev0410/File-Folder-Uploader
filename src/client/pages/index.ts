@@ -1,3 +1,4 @@
 import MainPage from "@/client/pages/MainPage";
+import FileDownloadPage from "@/client/pages/FileDownloadPage";
 
-export default MainPage;
+export { MainPage, FileDownloadPage };
