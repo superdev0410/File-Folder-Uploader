@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
-import MainPage from "@/client/pages";
+import { MainPage, FileDownloadPage } from "@/client/pages";
 
 const App = () => {
   return (
@@ -10,6 +10,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route path="/download-file/:file" element={<FileDownloadPage />} />
         </Routes>
       </BrowserRouter>
       

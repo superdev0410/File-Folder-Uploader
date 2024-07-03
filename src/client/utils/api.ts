@@ -13,6 +13,14 @@ export const uploadFiles = async (files: FileList) => {
 }
 
 export const downloadFile = async (name: string) => {
-  const res = await axios.get(`/api/file/download/${name}`);
-  return res.data;
+  const res = await axios.get(`/api/file/download/${name}`, { responseType: "blob" });
+  const blob = new Blob([res.data]);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  URL.revokeObjectURL(url);
+  document.body.removeChild(a);
 }
