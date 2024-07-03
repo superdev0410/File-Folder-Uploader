@@ -23,3 +23,5 @@ fileRouter.get("/download/:file", async (req: Request, res: Response) => {
   const { file } = req.params;
   res.download(`./files/${file}`);
 });
+
+export default fileRouter;
